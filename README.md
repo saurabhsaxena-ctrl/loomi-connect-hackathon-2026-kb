@@ -51,8 +51,8 @@ Everything was custom-built using Claude as the operating system:
 |---|---|---|
 | **hackathon.loomi.ai** | Participant welcome kit, team registration, Slack onboarding | Netlify app |
 | **LUMA event page** | Public registration and closing ceremony invites | LUMA |
-| **Judging web app** | Judge login, team assignment, 5-criteria scoring | Google Apps Script + GSI auth |
-| **Live leaderboard** | Real-time rankings, auto-refreshed every 5 min | Google Sheets + Apps Script |
+| **Judging web app** | Judge login, team assignment, 5-criteria scoring — [open app](https://script.google.com/a/macros/bloomreach.com/s/AKfycbzzGeLGnS-hp_yJvBAJME0csYM-ejUSUGc-wDriHTVyrJU3kH_-WqY4VHWcXO8S_LDJ/exec) | Google Apps Script + GSI auth |
+| **Live leaderboard** | Real-time rankings, auto-refreshed every 5 min — [open sheet](https://docs.google.com/spreadsheets/d/1YMOjpOg1Jz-IufbSEGrKh_od_Vlw-NL9XPMEhnV4psA) | Google Sheets + Apps Script |
 | **Slack workspace** | Participant communication, support, announcements | Slack |
 
 → [Full infrastructure guide](for-hackathon-runners/README.md)
@@ -145,6 +145,13 @@ hackathon-2026-kb/
 │   ├── what-is-loomi-connect.md           ← Simple explanation + context
 │   ├── mcp-tools-full-list.md             ← All 89 tools across 3 servers
 │   └── architecture-overview.md           ← How it works technically
+│
+├── code/                                  ← All source code
+│   ├── judging-app-Code.gs                ← Judging web app — server side
+│   ├── judging-app-Index.html             ← Judging web app — client side UI
+│   ├── leaderboard.gs                     ← Live leaderboard script
+│   ├── submission-form-DISCARDED.gs       ← Google Forms attempt (discarded)
+│   └── judging-form-DISCARDED.gs          ← Google Forms judging (discarded)
 │
 └── data/                                  ← Raw structured data
     ├── registrations.json                 ← All 102 registrations (live API)

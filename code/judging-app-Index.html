@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loomi Hackathon — Judge Scoring</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+  .navbar { background: #1e293b; padding: 16px 24px; display: flex;
+            align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 10; }
+  .navbar-logo { font-size: 15px; font-weight: 700; color: #6C3FC5; }
+  .navbar-judge { font-size: 13px; color: #94a3b8; }
+
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 16px; }
+
+  .loading { text-align: center; padding: 80px 20px; color: #94a3b8; font-size: 15px; }
+  .spinner { width: 32px; height: 32px; border: 3px solid #334155;
+             border-top-color: #6C3FC5; border-radius: 50%;
+             animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box { background: #450a0a; border: 1px solid #b91c1c; border-radius: 12px;
+               padding: 32px; text-align: center; color: #fca5a5; line-height: 1.6; }
+  .error-box strong { font-size: 16px; display: block; margin-bottom: 8px; }
+
+  .progress-bar { margin-bottom: 16px; }
+  .progress-label { font-size: 12px; color: #64748b; margin-bottom: 8px; }
+  .progress-label span { color: #00B5B8; font-weight: 600; }
+  .progress-track { height: 4px; background: #1e293b; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #00B5B8; border-radius: 4px; transition: width 0.4s ease; }
+
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .tab { padding: 10px 18px; border-radius: 8px; cursor: pointer; font-size: 13px;
+         font-weight: 500; border: 1px solid #334155; background: #1e293b;
+         color: #94a3b8; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+  .tab:hover { border-color: #6C3FC5; color: #e2e8f0; }
+  .tab.active { background: #6C3FC5; border-color: #6C3FC5; color: #fff; }
+  .tab.done { border-color: #00B5B8; color: #00B5B8; background: #0f172a; }
+  .tab.active.done { background: #00B5B8; border-color: #00B5B8; color: #0f172a; }
+  .tab-num { font-size: 11px; opacity: 0.6; font-weight: 700; }
+  .tab-check { font-size: 12px; }
+
+  .card { background: #1e293b; border-radius: 12px; border: 1px solid #334155; overflow: hidden; }
+
+  .team-header { padding: 24px; border-bottom: 1px solid #334155; }
+  .team-name { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .team-track { font-size: 12px; color: #00B5B8; font-weight: 600;
+                text-transform: uppercase; letter-spacing: 0.05em; }
+  .team-project { font-size: 14px; color: #94a3b8; margin-top: 6px; font-style: italic; }
+
+  .links-bar { padding: 14px 24px; background: #0f172a; display: flex;
+               gap: 10px; flex-wrap: wrap; border-bottom: 1px solid #334155; }
+  .link-btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px;
+              border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none;
+              background: #1e293b; border: 1px solid #334155; color: #e2e8f0; transition: all 0.2s; }
+  .link-btn:hover { border-color: #6C3FC5; color: #6C3FC5; }
+  .link-btn.primary { border-color: #6C3FC5; color: #6C3FC5; background: rgba(108,63,197,0.1); }
+
+  .details { padding: 24px; display: grid; grid-template-columns: 1fr 1fr;
+             gap: 20px; border-bottom: 1px solid #334155; }
+  .detail-block h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+                     color: #64748b; margin-bottom: 8px; font-weight: 600; }
+  .detail-block p { font-size: 13px; color: #cbd5e1; line-height: 1.7;
+                    max-height: 180px; overflow-y: auto; }
+  .detail-block.highlight { background: rgba(108,63,197,0.08); border: 1px solid rgba(108,63,197,0.25);
+                             border-radius: 10px; padding: 16px; }
+  .detail-block.highlight h4 { color: #a78bfa; }
+  .detail-block.highlight p { color: #e2e8f0; max-height: 200px; }
+  .resp-note { padding: 16px 24px; background: rgba(0,181,184,0.06);
+               border-top: 1px solid #334155; border-bottom: 1px solid #334155; }
+  .resp-note h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+                  color: #00B5B8; margin-bottom: 8px; font-weight: 600; }
+  .resp-note p { font-size: 13px; color: #cbd5e1; line-height: 1.7; }
+
+  .scoring { padding: 24px; }
+  .scoring-title { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .scoring-scale { font-size: 12px; color: #64748b; margin-bottom: 28px; }
+
+  .criterion { margin-bottom: 28px; }
+  .criterion-title { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 4px; }
+  .criterion-help { font-size: 12px; color: #64748b; margin-bottom: 12px; line-height: 1.6; }
+  .score-options { display: flex; gap: 8px; }
+  .score-btn { width: 46px; height: 46px; border-radius: 8px; border: 1px solid #334155;
+               background: #0f172a; color: #94a3b8; font-size: 16px; font-weight: 700;
+               cursor: pointer; transition: all 0.15s; }
+  .score-btn:hover { border-color: #6C3FC5; color: #6C3FC5; transform: scale(1.05); }
+  .score-btn.selected { background: #6C3FC5; border-color: #6C3FC5; color: #fff; transform: scale(1.05); }
+
+  .feedback-section { margin-top: 28px; }
+  .feedback-label { font-size: 14px; font-weight: 600; color: #e2e8f0;
+                    margin-bottom: 4px; display: block; }
+  .feedback-help { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+  textarea { width: 100%; background: #0f172a; border: 1px solid #334155;
+             border-radius: 8px; color: #e2e8f0; padding: 12px; font-size: 13px;
+             font-family: inherit; resize: vertical; min-height: 100px; transition: border 0.2s; }
+  textarea:focus { outline: none; border-color: #6C3FC5; }
+
+  .submit-row { margin-top: 24px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .total-preview { font-size: 13px; color: #64748b; }
+  .total-preview span { color: #6C3FC5; font-weight: 700; font-size: 16px; }
+  .submit-btn { padding: 14px 36px; background: #6C3FC5; border: none; border-radius: 8px;
+                color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .submit-btn:hover:not(:disabled) { background: #5a32a3; transform: translateY(-1px); }
+  .submit-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; transform: none; }
+  .submit-status { font-size: 13px; color: #94a3b8; }
+
+  .done-banner { padding: 32px; text-align: center; }
+  .done-icon { font-size: 40px; margin-bottom: 12px; }
+  .done-banner h3 { font-size: 18px; color: #00B5B8; margin-bottom: 8px; }
+  .done-banner p { font-size: 14px; color: #64748b; }
+
+  .all-done-banner { background: rgba(0,181,184,0.08); border: 1px solid #00B5B8;
+                     border-radius: 12px; padding: 32px; text-align: center; margin-bottom: 24px; }
+  .all-done-banner h2 { color: #00B5B8; font-size: 20px; margin-bottom: 8px; }
+  .all-done-banner p { color: #94a3b8; font-size: 14px; }
+
+  @media (max-width: 600px) {
+    .details { grid-template-columns: 1fr; }
+    .score-options { gap: 6px; }
+    .score-btn { width: 40px; height: 40px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="navbar-logo">🏆 Loomi Connect AI Hackathon — Judging</div>
+  <div class="navbar-judge" id="judgeLabel">Loading...</div>
+</div>
+
+<div class="container">
+  <div class="loading" id="loadingState">
+    <div class="spinner"></div>
+    Loading your assigned teams...
+  </div>
+  <div id="appState" style="display:none"></div>
+</div>
+
+<script>
+let judgeData = null;
+let currentTeamIndex = 0;
+let scores = {};
+let signedInEmail = '';
+
+window.onload = function() {
+  // Load Google Identity Services
+  const gsiScript = document.createElement('script');
+  gsiScript.src = 'https://accounts.google.com/gsi/client';
+  gsiScript.onload = initGoogleSignIn;
+  document.head.appendChild(gsiScript);
+};
+
+function initGoogleSignIn() {
+  google.accounts.id.initialize({
+    client_id: '292824132082-qbj3p6ov5jlhpb9v8r8k5q5k5q5k5q5k.apps.googleusercontent.com',
+    callback: handleCredential,
+    auto_select: true,
+    use_fedcm_for_prompt: true
+  });
+  google.accounts.id.prompt(function(notification) {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      // Auto-select failed, show manual sign-in button
+      showSignInButton();
+    }
+  });
+}
+
+function showSignInButton() {
+  document.getElementById('loadingState').innerHTML =
+    '<div style="text-align:center;padding:80px 20px">' +
+    '<div style="font-size:18px;color:#e2e8f0;margin-bottom:24px">Sign in with your Google account to continue</div>' +
+    '<div id="gsiButton"></div></div>';
+  google.accounts.id.renderButton(
+    document.getElementById('gsiButton'),
+    { theme: 'filled_blue', size: 'large', text: 'signin_with', shape: 'rectangular' }
+  );
+}
+
+function handleCredential(response) {
+  // Decode JWT to get email
+  const payload = JSON.parse(atob(response.credential.split('.')[1]));
+  signedInEmail = payload.email;
+  document.getElementById('loadingState').innerHTML =
+    '<div class="loading"><div class="spinner"></div>Loading your assigned teams...</div>';
+  google.script.run
+    .withSuccessHandler(init)
+    .withFailureHandler(function(e) {
+      document.getElementById('loadingState').innerHTML =
+        '<div class="error-box"><strong>Something went wrong</strong>' + e.message + '</div>';
+    })
+    .getJudgeData(signedInEmail);
+}
+
+function init(data) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('appState').style.display = 'block';
+
+  if (data.error) {
+    document.getElementById('appState').innerHTML =
+      '<div class="error-box"><strong>Access Denied</strong>' + data.error + '</div>';
+    return;
+  }
+
+  judgeData = data;
+  document.getElementById('judgeLabel').textContent = data.judge + '  ·  ' + data.email;
+  renderApp();
+}
+
+function renderApp() {
+  const teams = judgeData.teams;
+  const allDone = teams.every(t => t.scored);
+  const scoredCount = teams.filter(t => t.scored).length;
+  const total = teams.length;
+  const pct = Math.round((scoredCount / total) * 100);
+  let html = '';
+
+  if (allDone) {
+    html += '<div class="all-done-banner"><h2>🎉 All teams scored!</h2>' +
+            '<p>Thank you — your scores are saved. The leaderboard will be calculated after all judges complete.</p></div>';
+  }
+
+  // Progress bar
+  html += '<div class="progress-bar">' +
+          '<div class="progress-label">Your Progress — <span>' + scoredCount + ' of ' + total + ' scored</span></div>' +
+          '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+          '</div>';
+
+  // Tabs with number + name + checkmark
+  html += '<div class="tabs">';
+  teams.forEach((t, i) => {
+    let cls = 'tab';
+    if (i === currentTeamIndex) cls += ' active';
+    if (t.scored) cls += ' done';
+    html += '<div class="' + cls + '" onclick="switchTeam(' + i + ')">' +
+            '<span class="tab-num">' + (i + 1) + '</span>' +
+            t.name +
+            (t.scored ? '<span class="tab-check">✓</span>' : '') +
+            '</div>';
+  });
+  html += '</div>';
+
+  html += renderTeam(teams[currentTeamIndex]);
+  document.getElementById('appState').innerHTML = html;
+  restoreScores(teams[currentTeamIndex].name);
+}
+
+function switchTeam(index) {
+  currentTeamIndex = index;
+  scores = {};
+  renderApp();
+}
+
+function renderTeam(team) {
+  if (team.scored) {
+    return '<div class="card"><div class="done-banner">' +
+           '<div class="done-icon">✅</div>' +
+           '<h3>Scores submitted for ' + team.name + '</h3>' +
+           '<p>Thank you! Use the tabs above to switch to your next team.</p>' +
+           '</div></div>';
+  }
+
+  let links = '';
+  if (team.video)   links += '<a class="link-btn primary" href="' + team.video + '" target="_blank">▶ Watch Demo Video</a>';
+  if (team.diagram) links += '<a class="link-btn" href="' + team.diagram + '" target="_blank">📄 Architecture Diagram</a>';
+  if (team.deck && team.deck.toString().trim())
+                    links += '<a class="link-btn" href="' + team.deck + '" target="_blank">🖼️ Presentation Deck</a>';
+  if (team.github && team.github.toString().trim())
+                    links += '<a class="link-btn" href="' + team.github + '" target="_blank">🔗 GitHub Repo</a>';
+  if (!links)       links  = '<span style="color:#64748b;font-size:13px">No links submitted yet</span>';
+
+  return `
+  <div class="card">
+    <div class="team-header">
+      <div class="team-name">${team.name}</div>
+      <div class="team-track">${team.track}</div>
+      <div class="team-project">${team.project}</div>
+    </div>
+
+    <div class="links-bar">${links}</div>
+
+    <div class="details">
+      <div class="detail-block highlight">
+        <h4>📝 Project Summary</h4>
+        <p>${team.summary}</p>
+      </div>
+      <div class="detail-block highlight">
+        <h4>🔧 MCP Usage</h4>
+        <p>${team.mcp}</p>
+      </div>
+    </div>
+
+    ${team.respNote && team.respNote.toString().trim() ? `
+    <div class="resp-note">
+      <h4>🛡️ Responsible AI Note</h4>
+      <p>${team.respNote}</p>
+    </div>` : ''}
+
+    <div class="scoring">
+      <div class="scoring-title">Score This Team</div>
+      <div class="scoring-scale">0 = Not present &nbsp;·&nbsp; 1–2 = Weak &nbsp;·&nbsp; 3 = Meets expectations &nbsp;·&nbsp; 4 = Strong &nbsp;·&nbsp; 5 = Exceptional</div>
+
+      ${criterion('innovation', '1. Innovation & Creativity',
+        'Is the idea original and creative? Does it go beyond the obvious use case? Would it surprise a Bloomreach customer in a good way?')}
+      ${criterion('technical', '2. Technical Execution',
+        'Does the agent actually work end-to-end? Is the MCP integration stable and reliable? Does the demo show a real, functioning solution?')}
+      ${criterion('business', '3. Business Value & Impact',
+        'Would a real customer use this? Does it solve a meaningful problem? Could it drive measurable outcomes — revenue, efficiency, engagement?')}
+      ${criterion('mcp', '4. MCP Usage Quality',
+        'Are MCP calls central to the solution — not just a checkbox? Did they use multiple capabilities thoughtfully and purposefully?')}
+      ${criterion('demo', '5. Demo & Presentation',
+        'Was it clear and compelling within 5 minutes? Could an exec watching this be impressed? Did the live demo work smoothly?')}
+
+      <div class="feedback-section">
+        <label class="feedback-label">🗒️ Judge Notes <span style="color:#64748b;font-weight:400">(optional — internal only)</span></label>
+        <p class="feedback-help">Your personal rationale behind the scores — why you rated each criterion the way you did. This is for internal review only and will NOT be shared with teams.</p>
+        <textarea id="judgeNotes" placeholder="e.g. Scored MCP quality 4 because they used 3 capabilities but the integration felt shallow in one area. Innovation was strong — hadn't seen this approach before..."></textarea>
+      </div>
+
+      <div class="feedback-section" style="margin-top:20px">
+        <label class="feedback-label">💬 Feedback for the Team <span style="color:#64748b;font-weight:400">(optional — shared with team)</span></label>
+        <p class="feedback-help">Constructive feedback that will be shared with the team after Demo Day. Keep it encouraging and actionable.</p>
+        <textarea id="feedback" placeholder="What did they do well? What could be improved?"></textarea>
+      </div>
+
+      <div class="submit-row">
+        <button class="submit-btn" id="submitBtn" onclick="submitScore()" disabled>Submit Scores</button>
+        <div class="total-preview" id="totalPreview"></div>
+        <span class="submit-status" id="submitStatus"></span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function criterion(id, title, help) {
+  let btns = '';
+  for (let i = 0; i <= 5; i++) {
+    btns += '<button class="score-btn" id="' + id + '_' + i +
+            '" onclick="selectScore(\'' + id + '\', ' + i + ')">' + i + '</button>';
+  }
+  return `<div class="criterion">
+    <div class="criterion-title">${title}</div>
+    <div class="criterion-help">${help}</div>
+    <div class="score-options">${btns}</div>
+  </div>`;
+}
+
+function selectScore(crit, value) {
+  scores[crit] = value;
+  for (let i = 0; i <= 5; i++) {
+    const btn = document.getElementById(crit + '_' + i);
+    if (btn) btn.classList.toggle('selected', i === value);
+  }
+  updateTotal();
+}
+
+function getScore(id) {
+  return scores[id] !== undefined ? scores[id] : null;
+}
+
+function updateTotal() {
+  const criteria = ['innovation', 'technical', 'business', 'mcp', 'demo'];
+  const allSet = criteria.every(c => getScore(c) !== null);
+  document.getElementById('submitBtn').disabled = !allSet;
+  if (allSet) {
+    const total = criteria.reduce((sum, c) => sum + getScore(c), 0);
+    document.getElementById('totalPreview').innerHTML = 'Total: <span>' + total + ' / 25</span>';
+  } else {
+    document.getElementById('totalPreview').innerHTML = '';
+  }
+}
+
+function restoreScores(teamName) {
+  // Scores reset when switching teams — nothing to restore
+}
+
+function submitScore() {
+  const team = judgeData.teams[currentTeamIndex];
+  const payload = {
+    team:       team.name,
+    judgeEmail: signedInEmail,
+    innovation: getScore('innovation'),
+    technical:  getScore('technical'),
+    business:   getScore('business'),
+    mcp:        getScore('mcp'),
+    demo:       getScore('demo'),
+    judgeNotes: document.getElementById('judgeNotes') ?
+                document.getElementById('judgeNotes').value : '',
+    feedback:   document.getElementById('feedback') ?
+                document.getElementById('feedback').value : ''
+  };
+
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitStatus').textContent = 'Submitting...';
+
+  google.script.run
+    .withSuccessHandler(function(result) {
+      if (result.success) {
+        judgeData.teams[currentTeamIndex].scored = true;
+        scores = {};
+        // Auto-move to next unscored team
+        const next = judgeData.teams.findIndex((t, i) => !t.scored);
+        currentTeamIndex = next >= 0 ? next : currentTeamIndex;
+        renderApp();
+      } else {
+        document.getElementById('submitStatus').textContent = 'Error: ' + (result.error || 'Unknown error');
+        document.getElementById('submitBtn').disabled = false;
+      }
+    })
+    .withFailureHandler(function(e) {
+      document.getElementById('submitStatus').textContent = 'Failed: ' + e.message;
+      document.getElementById('submitBtn').disabled = false;
+    })
+    .submitScore(payload);
+}
+</script>
+</body>
+</html>

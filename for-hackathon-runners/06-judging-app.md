@@ -12,6 +12,15 @@ Google Forms was initially considered but could not:
 - Display team artifacts (video, deck, GitHub) inline
 - Handle external judges from outside Bloomreach
 
+## Live URL
+
+> **https://script.google.com/a/macros/bloomreach.com/s/AKfycbzzGeLGnS-hp_yJvBAJME0csYM-ejUSUGc-wDriHTVyrJU3kH_-WqY4VHWcXO8S_LDJ/exec**
+
+## Source Code
+
+→ [judging-app-Code.gs](../code/judging-app-Code.gs) — server-side script
+→ [judging-app-Index.html](../code/judging-app-Index.html) — client-side UI
+
 ## Architecture
 
 - **Backend:** Google Apps Script (Code.gs)
