@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hackathon 2026 KB — Sitemap</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 40px 20px; }
+  h1 { text-align: center; font-size: 1.8rem; color: #fff; margin-bottom: 8px; }
+  .subtitle { text-align: center; color: #94a3b8; margin-bottom: 48px; font-size: 0.95rem; }
+  .hub { display: flex; flex-direction: column; align-items: center; gap: 40px; max-width: 1100px; margin: 0 auto; }
+  .root-card { background: #6C3FC5; border-radius: 12px; padding: 20px 40px; text-align: center; width: 340px; }
+  .root-card h2 { font-size: 1.1rem; color: #fff; }
+  .root-card p { font-size: 0.8rem; color: rgba(255,255,255,0.8); margin-top: 4px; }
+  .columns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; width: 100%; }
+  .column { display: flex; flex-direction: column; gap: 12px; }
+  .col-header { border-radius: 10px; padding: 14px 16px; text-align: center; }
+  .col-header.runner { background: #0891b2; }
+  .col-header.learner { background: #059669; }
+  .col-header.shared { background: #7c3aed; }
+  .col-header h3 { font-size: 0.95rem; color: #fff; }
+  .col-header p { font-size: 0.75rem; color: rgba(255,255,255,0.8); margin-top: 3px; }
+  .file-card { background: #1e293b; border-radius: 8px; padding: 10px 14px; border-left: 3px solid #334155; }
+  .file-card.runner { border-left-color: #0891b2; }
+  .file-card.learner { border-left-color: #059669; }
+  .file-card.shared { border-left-color: #7c3aed; }
+  .file-card.data { border-left-color: #f59e0b; }
+  .file-name { font-size: 0.78rem; font-family: monospace; color: #94a3b8; }
+  .file-desc { font-size: 0.82rem; color: #cbd5e1; margin-top: 3px; }
+  .stats { display: flex; gap: 24px; justify-content: center; margin-top: 8px; }
+  .stat { background: #1e293b; border-radius: 10px; padding: 14px 24px; text-align: center; }
+  .stat-num { font-size: 1.6rem; font-weight: bold; color: #6C3FC5; }
+  .stat-label { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
+  .connector { width: 2px; height: 32px; background: #334155; margin: 0 auto; }
+  .branch { display: flex; justify-content: center; gap: 200px; position: relative; }
+  .branch::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 60%; height: 2px; background: #334155; }
+</style>
+</head>
+<body>
+
+<h1>🏆 Loomi Connect AI Hackathon 2026</h1>
+<p class="subtitle">Knowledge Base — Complete Sitemap</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-num">102</div><div class="stat-label">Teams Registered</div></div>
+  <div class="stat"><div class="stat-num">29</div><div class="stat-label">Countries</div></div>
+  <div class="stat"><div class="stat-num">25</div><div class="stat-label">Final Submissions</div></div>
+  <div class="stat"><div class="stat-num">89</div><div class="stat-label">MCP Tools</div></div>
+</div>
+
+<div class="hub">
+  <div class="connector"></div>
+  <div class="root-card">
+    <h2>📁 README.md</h2>
+    <p>Master entry point + navigation guide</p>
+  </div>
+  <div class="connector"></div>
+  <div class="root-card" style="background:#1e40af;">
+    <h2>🧠 ONBOARDING.md</h2>
+    <p>Claude context brain — shareable intelligence layer</p>
+  </div>
+  <div class="connector"></div>
+
+  <div class="columns">
+
+    <div class="column">
+      <div class="col-header runner">
+        <h3>🏃 for-hackathon-runners/</h3>
+        <p>Run your own hackathon</p>
+      </div>
+      <div class="file-card runner"><div class="file-name">README.md</div><div class="file-desc">Start here — runner guide</div></div>
+      <div class="file-card runner"><div class="file-name">01-concept-and-planning.md</div><div class="file-desc">Goals, format, decisions made</div></div>
+      <div class="file-card runner"><div class="file-name">02-timeline-and-checklist.md</div><div class="file-desc">Week-by-week + master checklist</div></div>
+      <div class="file-card runner"><div class="file-name">03-luma-and-registration.md</div><div class="file-desc">LUMA setup + registration flow</div></div>
+      <div class="file-card runner"><div class="file-name">04-netlify-onboarding-app.md</div><div class="file-desc">hackathon.loomi.ai welcome kit</div></div>
+      <div class="file-card runner"><div class="file-name">05-slack-workspace.md</div><div class="file-desc">Channels, welcome messages</div></div>
+      <div class="file-card runner"><div class="file-name">06-judging-app.md</div><div class="file-desc">Full judging web app guide</div></div>
+      <div class="file-card runner"><div class="file-name">07-leaderboard.md</div><div class="file-desc">Google Sheets leaderboard setup</div></div>
+      <div class="file-card runner"><div class="file-name">08-tracks-and-criteria.md</div><div class="file-desc">6 tracks, 5 criteria, rubric</div></div>
+      <div class="file-card runner"><div class="file-name">09-closing-ceremony.md</div><div class="file-desc">Closing ceremony playbook</div></div>
+    </div>
+
+    <div class="column">
+      <div class="col-header learner">
+        <h3>📊 for-outcome-learners/</h3>
+        <p>What came out of this hackathon</p>
+      </div>
+      <div class="file-card learner"><div class="file-name">README.md</div><div class="file-desc">Start here — learner guide</div></div>
+      <div class="file-card learner"><div class="file-name">01-hackathon-at-a-glance.md</div><div class="file-desc">Stats, numbers, highlights</div></div>
+      <div class="file-card learner"><div class="file-name">02-final-leaderboard.md</div><div class="file-desc">Full ranked 25 teams + scores</div></div>
+      <div class="file-card learner"><div class="file-name">03-top-4-deep-dives.md</div><div class="file-desc">LoomiTown, Rohlik, IbxLab, Vielendark</div></div>
+      <div class="file-card learner"><div class="file-name">04-all-submissions.md</div><div class="file-desc">All 25 teams with links</div></div>
+      <div class="file-card learner"><div class="file-name">05-submissions-by-track.md</div><div class="file-desc">Grouped by challenge track</div></div>
+      <div class="file-card learner"><div class="file-name">06-mcp-usage-patterns.md</div><div class="file-desc">Which MCPs used and how</div></div>
+      <div class="file-card learner"><div class="file-name">07-insights-and-signals.md</div><div class="file-desc">Market signals, shopper gap</div></div>
+      <div class="file-card learner"><div class="file-name">08-participant-landscape.md</div><div class="file-desc">Companies, countries, types</div></div>
+    </div>
+
+    <div class="column">
+      <div class="col-header shared">
+        <h3>🔌 loomi-connect-primer/</h3>
+        <p>What is Loomi Connect</p>
+      </div>
+      <div class="file-card shared"><div class="file-name">what-is-loomi-connect.md</div><div class="file-desc">MCP layer explained simply</div></div>
+      <div class="file-card shared"><div class="file-name">mcp-tools-full-list.md</div><div class="file-desc">All 89 tools across 3 servers</div></div>
+      <div class="file-card shared"><div class="file-name">architecture-overview.md</div><div class="file-desc">How Loomi Connect works</div></div>
+      <br>
+      <div class="col-header" style="background:#b45309;">
+        <h3>📦 data/</h3>
+        <p>Raw structured data</p>
+      </div>
+      <div class="file-card data"><div class="file-name">registrations.json</div><div class="file-desc">All 102 registrations</div></div>
+      <div class="file-card data"><div class="file-name">submissions.json</div><div class="file-desc">25 final submissions + URLs</div></div>
+      <div class="file-card data"><div class="file-name">leaderboard.json</div><div class="file-desc">Final scores all 25 teams</div></div>
+      <div class="file-card data"><div class="file-name">mcp-tools.json</div><div class="file-desc">All 89 MCP tools structured</div></div>
+    </div>
+
+  </div>
+</div>
+
+<p style="text-align:center; color:#475569; margin-top:48px; font-size:0.8rem;">Loomi Connect AI Hackathon 2026 · Built by Saurabh Saxena, Bloomreach · June 2026</p>
+</body>
+</html>
